@@ -16,14 +16,13 @@ import store from "../__mocks__/store";
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     test("Then current bills should be displayed", async () => {
-      //generate the bills on the page with bills from fixtures?
       document.body.innerHTML = BillsUI({ data: bills });
 
       const billsList = new Bills({
         document,
-        onNavigate: (pathname) => (document.body.innerHTML = ROUTES({ pathname })), // routes?
+        onNavigate: (pathname) => (document.body.innerHTML = ROUTES({ pathname })),
         store,
-        localStorageMock, // use a mock of the local storage?
+        localStorageMock,
       });
 
       //call getBills (mocked data from store.js)
@@ -62,12 +61,11 @@ describe("Given I am connected as an employee", () => {
 
   describe("When I click on the icon eye", () => {
     test("Then a modal should open", () => {
-      //generate the bills on the page with bills from fixtures?
       document.body.innerHTML = BillsUI({ data: bills });
 
       const billsList = new Bills({
         document,
-        onNavigate: (pathname) => (document.body.innerHTML = ROUTES({ pathname })), // routes?
+        onNavigate: (pathname) => (document.body.innerHTML = ROUTES({ pathname })),
         store,
         localStorageMock,
       });

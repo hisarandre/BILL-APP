@@ -3,11 +3,11 @@
  */
 
 import "@testing-library/jest-dom/extend-expect";
-import userEvent from "@testing-library/user-event";
-import { screen, waitFor, fireEvent } from "@testing-library/dom";
+import { screen, fireEvent } from "@testing-library/dom";
 import NewBillUI from "../views/NewBillUI.js";
 import NewBill from "../containers/NewBill.js";
-import { ROUTES_PATH, ROUTES } from "../constants/routes.js";
+import BillsUI from "../views/BillsUI.js";
+import { ROUTES } from "../constants/routes.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import store from "../__mocks__/store";
 
@@ -88,19 +88,44 @@ describe("Given I am connected as an employee", () => {
   });
 });
 
-// test d'intégration GET
+// test d'intégration POST
 describe("Given I am a user connected as an employee", () => {
   describe("When I create a new bill", () => {
-    test("...", async () => {
-      //...
+    test("fetches update bill API POST", async () => {
+      const storeSpy = jest.spyOn(store, "bills");
+      const bill = await store.bills().update();
+
+      expect(storeSpy).toHaveBeenCalledTimes(1);
+      expect(bill.name).toBe("encore");
     });
 
-    test("... 404 message error", async () => {
-      //error 404
+    test("fetches bills from an API POST and fails with 404 message error", async () => {
+      //simule a rejected promise
+      store.bills.mockImplementationOnce(() => {
+        return {
+          udapte: () => {
+            return Promise.reject(new Error("Erreur 404"));
+          },
+        };
+      });
+
+      document.body.innerHTML = BillsUI({ error: "Erreur 404" });
+      const message = await screen.getByText(/Erreur 404/);
+      expect(message).toBeTruthy();
     });
 
-    test("... 500 message error", async () => {
-      //error500
+    test("fetches bills from an API POST and fails with 500 message error", async () => {
+      store.bills.mockImplementationOnce(() => {
+        return {
+          udapte: () => {
+            return Promise.reject(new Error("Erreur 500"));
+          },
+        };
+      });
+
+      document.body.innerHTML = BillsUI({ error: "Erreur 500" });
+      const message = await screen.getByText(/Erreur 500/);
+      expect(message).toBeTruthy();
     });
   });
 });
