@@ -15,6 +15,7 @@ import store from "../__mocks__/store";
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
+    //Unit test #1
     test("Then current bills should be displayed", async () => {
       document.body.innerHTML = BillsUI({ data: bills });
 
@@ -25,10 +26,8 @@ describe("Given I am connected as an employee", () => {
         localStorageMock,
       });
 
-      //call getBills (mocked data from store.js)
-      const billsData = await billsList.getBills();
-      //expect the lenght to be the same number as the number of bills in the mocked data
-      expect(billsData.length).toBe(4);
+      const billsData = await billsList.getBills(); //call getBills (mocked data from store.js)
+      expect(billsData.length).toBe(4); //expect the lenght to be the same number as the number of bills in the mocked data
     });
 
     test("Then bill icon in vertical layout should be highlighted", async () => {
@@ -46,6 +45,8 @@ describe("Given I am connected as an employee", () => {
       window.onNavigate(ROUTES_PATH.Bills);
       await waitFor(() => screen.getByTestId("icon-window"));
       const windowIcon = screen.getByTestId("icon-window");
+
+      //Unit test #2
       //add the missing expect
       expect(windowIcon).toHaveClass("active-icon");
     });
@@ -58,6 +59,8 @@ describe("Given I am connected as an employee", () => {
       expect(dates).toEqual(datesSorted);
     });
   });
+
+  //Unit test #3 & #4
 
   describe("When I click on the icon eye", () => {
     test("Then a modal should open", () => {

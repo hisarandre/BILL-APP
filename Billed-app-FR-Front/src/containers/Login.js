@@ -33,6 +33,7 @@ export default class Login {
       });
   };
 
+  // Fix bug #1
   handleSubmitAdmin = (e) => {
     e.preventDefault();
     const user = {

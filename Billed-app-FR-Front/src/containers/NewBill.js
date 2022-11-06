@@ -19,9 +19,13 @@ export default class NewBill {
     e.preventDefault();
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0];
 
+    //fix bug #4
     const regexFileType = new RegExp(`(jpg|jpeg|png)`, "i");
     const fileTypeTest = regexFileType.test(file.type);
-    if (!fileTypeTest) e.target.value = "";
+    if (!fileTypeTest) {
+      e.target.value = "";
+      return;
+    }
 
     const filePath = e.target.value.split(/\\/g);
     const fileName = filePath[filePath.length - 1];

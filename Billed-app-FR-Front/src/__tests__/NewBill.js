@@ -3,7 +3,7 @@
  */
 
 import "@testing-library/jest-dom/extend-expect";
-import { screen, fireEvent } from "@testing-library/dom";
+import { screen, fireEvent, userEvent } from "@testing-library/dom";
 import NewBillUI from "../views/NewBillUI.js";
 import NewBill from "../containers/NewBill.js";
 import BillsUI from "../views/BillsUI.js";
@@ -15,6 +15,7 @@ describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
     test("Then I upload a png or jpg/jpeg file", () => {
       Object.defineProperty(window, "localStorage", { value: localStorageMock });
+
       window.localStorage.setItem(
         "user",
         JSON.stringify({
@@ -79,11 +80,55 @@ describe("Given I am connected as an employee", () => {
         localStorageMock,
       });
 
-      const handleSubmit = jest.fn(newBill.handleSubmit);
-      const newBillForm = screen.getByTestId("form-new-bill");
-      newBillForm.addEventListener("submit", handleSubmit);
-      fireEvent.submit(newBillForm);
+      const billData = {
+        type: "Transports",
+        name: "Train Lyon",
+        date: "2022-11-14",
+        amount: 30,
+        vat: 70,
+        pct: 30,
+        commentary: "Voyage d'affaire",
+        status: "pending",
+      };
+
+      const inputType = screen.getByTestId("expense-type");
+      const inputName = screen.getByTestId("expense-name");
+      const inputDate = screen.getByTestId("datepicker");
+      const inputAmount = screen.getByTestId("amount");
+      const inputVAT = screen.getByTestId("vat");
+      const inputPCT = screen.getByTestId("pct");
+      const inputComment = screen.getByTestId("commentary");
+      const inputFile = screen.getByTestId("file");
+      const form = screen.getByTestId("form-new-bill");
+
+      fireEvent.change(inputType, { target: { value: billData.type } });
+      fireEvent.change(inputName, { target: { value: billData.name } });
+      fireEvent.change(inputDate, { target: { value: billData.date } });
+      fireEvent.change(inputAmount, { target: { value: billData.amount } });
+      fireEvent.change(inputVAT, { target: { value: billData.vat } });
+      fireEvent.change(inputPCT, { target: { value: billData.pct } });
+      fireEvent.change(inputComment, { target: { value: billData.commentary } });
+      fireEvent.change(inputFile, {
+        target: {
+          files: [new File(["test-bill.jpg"], "test-bill.jpg", { type: "image/jpg" })],
+        },
+      });
+
+      //submit form
+      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+      form.addEventListener("submit", handleSubmit);
+      fireEvent.submit(form);
       expect(handleSubmit).toHaveBeenCalled();
+
+      //check inputs validity
+      expect(inputType.validity.valid).toBeTruthy();
+      expect(inputName.validity.valid).toBeTruthy();
+      expect(inputDate.validity.valid).toBeTruthy();
+      expect(inputAmount.validity.valid).toBeTruthy();
+      expect(inputVAT.validity.valid).toBeTruthy();
+      expect(inputPCT.validity.valid).toBeTruthy();
+      expect(inputComment.validity.valid).toBeTruthy();
+      expect(inputFile.files[0]).toBeTruthy();
     });
   });
 });
